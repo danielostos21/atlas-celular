@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f3eee2" />
+  <meta name="description" content="Explora una célula animal en 3D: membrana, núcleo, mitocondrias, citoesqueleto y otros organelos con explicaciones interactivas." />
+  <title>Atlas Celular · Célula animal interactiva 3D</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%237ea99c'/%3E%3Ccircle cx='14' cy='15' r='5' fill='%23c98391'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Pinyon+Script&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#organelle-list">Saltar a la lista de estructuras</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="header-rule" aria-hidden="true"></span>
+      <h1 class="brand-title">Atlas Celular</h1>
+      <span class="header-rule" aria-hidden="true"></span>
+    </div>
+    <p class="brand-subtitle">Biología celular · Laboratorio interactivo 3D</p>
+    <nav class="atlas-nav" aria-label="Secciones del atlas">
+      <a href="#atlas-general" class="active">Célula completa</a>
+      <a href="#membrana">Membrana celular</a>
+      <a href="#citoesqueleto">Citoesqueleto</a>
+    </nav>
+  </header>
+
+  <main id="atlas-general" class="layout">
+    <aside class="panel library-panel" aria-label="Biblioteca de estructuras celulares">
+      <div class="library-head">
+        <h2 class="panel-title">Estructuras</h2>
+        <span class="library-count">12</span>
+      </div>
+      <button id="btn-overview" class="overview-button active" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        Vista de la célula completa
+      </button>
+      <nav id="organelle-list" class="organ-list" aria-label="Organelos de la célula animal"></nav>
+      <div class="library-foot">
+        <span class="foot-dot" aria-hidden="true"></span>
+        Selecciona una estructura para descubrirla
+      </div>
+    </aside>
+
+    <section class="stage-wrap" aria-label="Modelo tridimensional de una célula animal">
+      <div class="stage-frame" id="stage-frame">
+        <div class="cell-fallback" id="cell-fallback" aria-hidden="true">
+          <div class="fallback-cell"><span></span><i></i><b></b></div>
+        </div>
+        <canvas id="stage" aria-label="Célula animal 3D. Arrastra para girar, usa la rueda para acercar y selecciona los puntos para aprender."></canvas>
+
+        <div class="specimen-tag">
+          <span class="specimen-index">ESPÉCIMEN · 01</span>
+          <strong>Célula animal eucariota</strong>
+        </div>
+
+        <div class="tip-note">
+          <div class="tip-title">Cómo explorar</div>
+          <p>Arrastra para girar · Rueda para acercar</p>
+          <p>Toca un punto o elige un organelo</p>
+        </div>
+
+        <div id="label-layer" class="label-layer" aria-label="Etiquetas del modelo"></div>
+
+        <div class="stage-caption">
+          <span class="caption-overline">Modelo didáctico · No a escala</span>
+          <span id="caption-name" class="caption-name">Célula animal</span>
+        </div>
+
+        <div class="stage-controls" aria-label="Controles del modelo">
+          <button id="btn-rotate" class="ctl-btn active" type="button" aria-pressed="true" title="Pausar o activar la rotación automática">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2 5.5"/><path d="M20 4v7h-7"/></svg>
+            <span>Rotación</span>
+          </button>
+          <button id="btn-labels" class="ctl-btn active" type="button" aria-pressed="true" title="Mostrar u ocultar las etiquetas">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>
+            <span>Etiquetas</span>
+          </button>
+          <button id="btn-reset" class="ctl-btn" type="button" title="Restablecer la cámara">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+            <span>Reiniciar</span>
+          </button>
+          <button id="btn-capture" class="ctl-btn" type="button" title="Guardar el modelo actual como foto JPG" aria-label="Guardar una foto JPG de la célula">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4l1.5-2h5L16 7h4v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+            <span>Foto</span>
+          </button>
+        </div>
+
+        <div id="loader" class="loader" role="status" aria-live="polite">
+          <div class="loader-cell" aria-hidden="true"></div>
+          <span>Preparando el espécimen…</span>
+        </div>
+        <div id="webgl-message" class="webgl-message" hidden>
+          <strong>La vista 3D no está disponible en este navegador.</strong>
+          <p>Puedes seguir explorando todas las estructuras y sus funciones desde la biblioteca.</p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel info-panel" aria-label="Información educativa">
+      <div id="info-content" class="info-content"></div>
+    </aside>
+  </main>
+
+  <section id="membrana" class="detail-section" aria-labelledby="membrane-title">
+    <header class="detail-heading">
+      <div>
+        <span class="detail-index">MODELO ESPECÍFICO · 02</span>
+        <h2 id="membrane-title">Membrana celular</h2>
+        <p>Una frontera selectiva y fluida. Explora la organización de sus fosfolípidos, el colesterol y las proteínas que conectan el interior celular con el entorno.</p>
+      </div>
+      <a class="section-back" href="#atlas-general">‹ Volver al atlas general</a>
+    </header>
+    <div class="detail-grid">
+      <div class="detail-stage" id="membrane-stage">
+        <canvas id="membrane-canvas" aria-label="Modelo 3D de una bicapa fosfolipídica con proteínas, colesterol y glucocalix"></canvas>
+        <div class="detail-specimen"><span>CORTE MOLECULAR</span><strong>Bicapa fosfolipídica</strong></div>
+        <div class="detail-hint">Arrastra para girar · Toca un componente</div>
+        <div class="detail-controls">
+          <button type="button" class="detail-ctl active" data-detail-action="rotate" data-target="membrane" aria-pressed="true">Rotación</button>
+          <button type="button" class="detail-ctl" data-detail-action="reset" data-target="membrane">Reiniciar</button>
+          <button type="button" class="detail-ctl" data-detail-action="capture" data-target="membrane" aria-label="Guardar una foto JPG de la membrana">Foto</button>
+        </div>
+        <div class="detail-loader" id="membrane-loader" role="status">Desplázate para preparar el modelo…</div>
+      </div>
+      <aside class="detail-panel" aria-label="Componentes de la membrana">
+        <span class="detail-panel-kicker">Guía del modelo</span>
+        <h3>Componentes de la membrana</h3>
+        <div class="component-list" id="membrane-components">
+          <button type="button" class="component-button active" data-component="bilayer" aria-pressed="true"><span style="--swatch:#d2a35c"></span>Bicapa fosfolipídica</button>
+          <button type="button" class="component-button" data-component="channel" aria-pressed="false"><span style="--swatch:#9a72a0"></span>Proteína de canal</button>
+          <button type="button" class="component-button" data-component="cholesterol" aria-pressed="false"><span style="--swatch:#c97755"></span>Colesterol</button>
+          <button type="button" class="component-button" data-component="glycocalyx" aria-pressed="false"><span style="--swatch:#4c9b96"></span>Glucocalix</button>
+        </div>
+        <div id="membrane-detail-info" class="component-info" aria-live="polite"></div>
+        <div class="detail-note"><strong>Idea esencial</strong><p>Las cabezas hidrófilas miran hacia el agua y las colas hidrófobas se orientan hacia el interior de la bicapa.</p></div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="citoesqueleto" class="detail-section" aria-labelledby="cytoskeleton-title">
+    <header class="detail-heading">
+      <div>
+        <span class="detail-index">MODELO ESPECÍFICO · 03</span>
+        <h2 id="citoesqueleto-title">Citoesqueleto</h2>
+        <p>Una red mecánica y dinámica. Compara microtúbulos, actina y filamentos intermedios, y observa cómo una proteína motora transporta una vesícula.</p>
+      </div>
+      <a class="section-back" href="#atlas-general">‹ Volver al atlas general</a>
+    </header>
+    <div class="detail-grid">
+      <div class="detail-stage" id="cytoskeleton-stage">
+        <canvas id="cytoskeleton-canvas" aria-label="Modelo 3D del citoesqueleto con microtúbulos, actina, filamentos intermedios y una proteína motora"></canvas>
+        <div class="detail-specimen"><span>RED INTRACELULAR</span><strong>Arquitectura y transporte</strong></div>
+        <div class="detail-hint">Arrastra para girar · Observa la vesícula en movimiento</div>
+        <div class="detail-controls">
+          <button type="button" class="detail-ctl active" data-detail-action="rotate" data-target="cytoskeleton" aria-pressed="true">Rotación</button>
+          <button type="button" class="detail-ctl" data-detail-action="reset" data-target="cytoskeleton">Reiniciar</button>
+          <button type="button" class="detail-ctl" data-detail-action="capture" data-target="cytoskeleton" aria-label="Guardar una foto JPG del citoesqueleto">Foto</button>
+        </div>
+        <div class="detail-loader" id="cytoskeleton-loader" role="status">Desplázate para preparar el modelo…</div>
+      </div>
+      <aside class="detail-panel" aria-label="Componentes del citoesqueleto">
+        <span class="detail-panel-kicker">Guía del modelo</span>
+        <h3>Componentes de la red</h3>
+        <div class="component-list" id="cytoskeleton-components">
+          <button type="button" class="component-button active" data-component="microtubules" aria-pressed="true"><span style="--swatch:#6f9b68"></span>Microtúbulos</button>
+          <button type="button" class="component-button" data-component="actin" aria-pressed="false"><span style="--swatch:#c9796c"></span>Filamentos de actina</button>
+          <button type="button" class="component-button" data-component="intermediate" aria-pressed="false"><span style="--swatch:#6c86ad"></span>Filamentos intermedios</button>
+          <button type="button" class="component-button" data-component="motor" aria-pressed="false"><span style="--swatch:#bd9047"></span>Proteínas motoras</button>
+        </div>
+        <div id="cytoskeleton-detail-info" class="component-info" aria-live="polite"></div>
+        <div class="detail-note"><strong>Red complementaria</strong><p>Cada tipo de filamento aporta propiedades distintas: soporte, contracción, resistencia mecánica o vías de transporte.</p></div>
+      </aside>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>Un modelo para aprender, no una medición al microscopio · Geometría celular procedural · Interfaz adaptada de <em>Anatomy Atelier</em></p>
+  </footer>
+
+  <script type="importmap">
+    { "imports": { "three": "./js/vendor/three.module.js" } }
+  </script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
